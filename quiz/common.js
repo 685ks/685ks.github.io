@@ -30,7 +30,7 @@ function fmt(n) { return Number(n || 0).toLocaleString(); }
 // Reconnecting WebSocket with a message handler and a queue for messages
 // sent while the socket is still connecting.
 function connect(onMessage, onOpen) {
-  if (window.QW && QW.static) return QW.p2pConnect(onMessage, onOpen);
+  if (window.QW && QW.static) return QW.relayConnect(onMessage, onOpen);
   let ws, queue = [], retry = 0, closedByUs = false;
   const api = {
     send(msg) {
