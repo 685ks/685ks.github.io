@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quizwave · Host</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- quiz library -->
+<div id="s-lib" data-screen class="editor">
+  <div class="row" style="margin:8px 0 20px">
+    <a class="logo small" data-logo href="./" style="text-decoration:none">Quizwave</a>
+    <span class="spacer"></span>
+    <label class="btn ghost sm" for="import">Import JSON</label>
+    <input type="file" id="import" accept=".json,application/json" class="hidden">
+    <button class="primary sm" id="new">New quiz</button>
+  </div>
+  <h2>Your quizzes</h2>
+  <div id="lib" class="stack"></div>
+  <p class="dim" style="font-size:14px;margin-top:20px">Quizzes are saved in this browser. Use Export to keep a copy or move it to another computer.</p>
+</div>
+
+<!-- editor -->
+<div id="s-edit" data-screen class="editor hidden">
+  <div class="row" style="margin:8px 0 16px">
+    <button class="ghost sm" id="ed-back">&larr; Back</button>
+    <span class="spacer"></span>
+    <button class="ghost sm" id="ed-export">Export</button>
+    <button class="primary sm" id="ed-save">Save</button>
+  </div>
+  <div class="card stack">
+    <label class="muted" style="font-weight:800;font-size:13px">Quiz title</label>
+    <input id="ed-title" maxlength="120" placeholder="Enter a title">
+  </div>
+  <div id="ed-qs" class="stack" style="margin-top:14px"></div>
+  <div class="row" style="margin-top:14px">
+    <button class="ghost" id="ed-add">+ Add question</button>
+    <button class="ghost" id="ed-addtf">+ Add true / false</button>
+  </div>
+  <div class="err" id="ed-err" style="margin-top:12px;color:#ffb4b4"></div>
+</div>
+
+<!-- lobby -->
+<div id="s-lobby" data-screen class="screen hidden" style="text-align:center">
+  <div class="pinbox">
+    <div style="text-align:left">
+      <div style="font-weight:800">Join at <b id="lb-url"></b></div>
+      <div class="muted" style="font-size:14px">or scan the QR code with a phone camera</div>
+    </div>
+    <div style="text-align:left"><div style="font-weight:800">Game PIN:</div><div class="pin" id="lb-pin"></div></div>
+    <div class="qr"><img id="lb-qr" alt="QR code to join this game"><div class="muted" style="font-size:13px;font-weight:800">Scan to join</div></div>
+  </div>
+  <h2 style="margin-top:22px" id="lb-title"></h2>
+  <div class="row" style="justify-content:center;margin:12px 0 20px">
+    <span class="pill" style="background:rgba(0,0,0,.3);padding:8px 16px;border-radius:999px;font-weight:900;font-size:20px" id="lb-count">0 players</span>
+    <button class="ghost" id="lb-lock">Lock</button>
+    <button class="primary" id="lb-start" disabled>Start</button>
+  </div>
+  <div class="chips" id="lb-players" style="margin:0 auto"></div>
+  <p class="dim" id="lb-wait" style="font-size:22px;margin-top:30px">Waiting for players...</p>
+</div>
+
+<!-- in game -->
+<div id="s-game" data-screen class="hidden">
+  <div class="bar">
+    <span class="pill" id="g-num"></span>
+    <span class="pill" id="g-pin"></span>
+    <span class="spacer"></span>
+    <button class="ghost sm" id="g-mute">Sound on</button>
+    <button class="ghost sm" id="g-end">End game</button>
+    <button class="primary sm" id="g-next">Next</button>
+  </div>
+  <div id="g-body" style="padding:20px;max-width:1300px;margin:0 auto"></div>
+</div>
+
+<div id="s-over" data-screen class="screen center hidden">
+  <div class="logo" data-logo>Quizwave</div>
+  <h2 id="over-text" style="margin-top:20px"></h2>
+  <a class="btn primary" href="host.html" style="margin-top:12px">Back to my quizzes</a>
+</div>
+
+<script src="config.js"></script>
+<script src="vendor/peerjs.min.js"></script>
+<script src="game-bundle.js"></script>
+<script src="p2p.js"></script>
+<script src="common.js"></script>
+<script src="host.js"></script>
+</body>
+</html>

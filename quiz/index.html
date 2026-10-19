@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quizwave</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="screen center">
+  <div class="logo" data-logo>Quizwave</div>
+  <p class="dim" style="margin:6px 0 24px">Live quizzes for classrooms, parties and teams.</p>
+  <form class="card stack" id="f" autocomplete="off">
+    <input class="big" id="pin" inputmode="numeric" maxlength="6" placeholder="Game PIN" aria-label="Game PIN">
+    <button class="primary wide">Enter</button>
+    <div class="err" id="err"></div>
+  </form>
+  <p style="margin-top:28px"><a class="btn ghost" href="host.html">Host a game</a></p>
+</div>
+<script src="config.js"></script>
+<script src="vendor/peerjs.min.js"></script>
+<script src="game-bundle.js"></script>
+<script src="p2p.js"></script>
+<script src="common.js"></script>
+<script>
+$('#f').onsubmit = (e) => {
+  e.preventDefault();
+  const pin = $('#pin').value.replace(/\D/g, '');
+  if (pin.length !== 6) { $('#err').textContent = 'A game PIN has 6 digits.'; return; }
+  location.href = 'play.html?pin=' + pin;
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0a2c3a">
+<title>Quizwave · Play</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<div id="s-pin" data-screen class="screen center">
+  <div class="logo" data-logo>Quizwave</div>
+  <form class="card stack" id="f-pin" autocomplete="off" style="margin-top:24px">
+    <input class="big" id="pin" inputmode="numeric" maxlength="6" placeholder="Game PIN" aria-label="Game PIN">
+    <button class="primary wide">Enter</button>
+    <div class="err" id="pin-err"></div>
+  </form>
+</div>
+
+<div id="s-name" data-screen class="screen center hidden">
+  <div class="logo" data-logo>Quizwave</div>
+  <form class="card stack" id="f-name" autocomplete="off" style="margin-top:24px">
+    <input class="big" id="name" maxlength="16" placeholder="Nickname" aria-label="Nickname">
+    <button class="primary wide">OK, go!</button>
+    <div class="err" id="name-err"></div>
+  </form>
+</div>
+
+<div id="s-game" data-screen class="hidden">
+  <div class="bar">
+    <span class="pill" id="g-q"></span>
+    <span class="spacer"></span>
+    <span class="logo small" data-logo></span>
+  </div>
+  <div id="g-body"></div>
+  <div class="footer-bar"><span id="g-name"></span><span id="g-score"></span></div>
+</div>
+
+<div id="s-msg" data-screen class="screen center hidden">
+  <div class="logo" data-logo>Quizwave</div>
+  <h2 id="msg-text" style="margin-top:24px"></h2>
+  <a class="btn primary" href="play.html" style="margin-top:16px">Join another game</a>
+</div>
+
+<script src="config.js"></script>
+<script src="vendor/peerjs.min.js"></script>
+<script src="game-bundle.js"></script>
+<script src="p2p.js"></script>
+<script src="common.js"></script>
+<script src="play.js"></script>
+</body>
+</html>
