@@ -228,7 +228,7 @@ function onMessage(m) {
     if (!state) { session.del(); alert(m.message); sock.close(); renderLib(); }
     return;
   }
-  if (m.t === 'game:ended') { session.del(); sock.close(); if (state && state.phase === 'podium') return; $('#over-text').textContent = m.reason || 'The game has ended.'; show('s-over'); return; }
+  if (m.t === 'game:ended') { Sound.music(null); session.del(); sock.close(); if (state && state.phase === 'podium') return; $('#over-text').textContent = m.reason || 'The game has ended.'; show('s-over'); return; }
   if (m.t === 'host:replaced') { sock.close(); $('#over-text').textContent = 'This game is now being hosted in another tab.'; show('s-over'); return; }
   if (m.t === 'state') { state = m; render(); }
 }
@@ -249,12 +249,24 @@ function joinUrl() { return joinBase; }
 
 function render() {
   const s = state;
-  if (stopTimer) { stopTimer(); stopTimer = null; }
   const key = s.phase + ':' + (s.question ? s.question.index : '');
   const fresh = key !== lastKey;
   lastKey = key;
 
-  if (s.phase === 'lobby') return renderLobby(s);
+  if (s.phase === 'lobby') { Sound.music('lobby'); return renderLobby(s); }
+  // Mid-phase updates (mostly "another answer came in") only touch the
+  // counter, so animations and the timer keep running undisturbed.
+  if (!fresh) {
+    const a = $('#answered');
+    if (a && a.textContent !== String(s.answered)) {
+      a.textContent = s.answered;
+      a.classList.remove('bump'); void a.offsetWidth; a.classList.add('bump');
+    }
+    return;
+  }
+  if (stopTimer) { stopTimer(); stopTimer = null; }
+  Sound.music(s.phase === 'intro' || s.phase === 'question' ? 'question' : null);
+  $('.spotlights') && $('.spotlights').classList.toggle('on', s.phase === 'podium');
   show('s-game');
   $('#g-pin').textContent = `PIN ${s.pin}`;
   $('#g-num').textContent = s.question ? `${s.question.index + 1} of ${s.question.total}` : '';
@@ -268,11 +280,20 @@ function render() {
       const q = s.question;
       body(`<div class="center" style="min-height:70vh">
         <p class="dim" style="font-size:22px">Question ${q.index + 1} of ${q.total}</p>
-        <div class="qtext" style="font-size:44px;max-width:1100px">${esc(q.text)}</div>
-        ${q.points === 2 ? '<div class="result-box" style="margin-top:20px">Double points!</div>' : ''}
-        <div style="width:min(600px,80vw);height:10px;background:rgba(255,255,255,.2);border-radius:5px;margin-top:40px;overflow:hidden"><div id="intro-bar" style="height:100%;width:0;background:var(--accent)"></div></div>
+        <div class="qtext zoom" style="font-size:44px;max-width:1100px">${esc(q.text)}</div>
+        ${q.points === 2 ? '<div class="result-box pop" style="margin-top:20px;animation-delay:.4s">Double points!</div>' : ''}
+        <div class="intro-count" id="intro-count"></div>
+        <div style="width:min(600px,80vw);height:10px;background:rgba(255,255,255,.2);border-radius:5px;margin-top:24px;overflow:hidden"><div id="intro-bar" style="height:100%;width:0;background:var(--accent)"></div></div>
       </div>`);
-      stopTimer = countdown(s.introMs, (left) => { const b = $('#intro-bar'); if (b) b.style.width = (100 - left / s.introMs * 100) + '%'; });
+      stopTimer = countdown(s.introMs, (left, sec, changed) => {
+        const b = $('#intro-bar'); if (b) b.style.width = (100 - left / s.introMs * 100) + '%';
+        const c = $('#intro-count');
+        if (c && changed && sec > 0) {
+          c.textContent = sec;
+          c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
+          Sound.tone(sec === 1 ? 880 : 660, 0.12, 'triangle', 0.1);
+        }
+      });
       return;
     }
 
@@ -291,6 +312,7 @@ function render() {
         if (!t) return;
         t.style.setProperty('--p', left / (q.time * 1000));
         t.querySelector('span').textContent = sec;
+        t.classList.toggle('urgent', sec <= 5);
         if (changed && sec <= 5 && sec > 0) Sound.tick();
       });
       return;
@@ -304,43 +326,109 @@ function render() {
       body(`<div class="qtext">${esc(q.text)}</div>
         <div class="bars" style="margin:30px 0">${r.counts.map((c, i) => `
           <div class="bar-col opt${i} ${r.correct.includes(i) ? '' : 'wrong'}">
-            <div style="font-weight:900;font-size:22px;margin-bottom:4px">${c}</div>
+            <div style="font-weight:900;font-size:22px;margin-bottom:4px" class="cnt" data-to="${c}">0</div>
             <div class="fill" style="height:0" data-h="${(c / max) * 200}"></div>
             <div class="lbl">${SHAPES[i]}${r.correct.includes(i) ? '&#10004;' : ''}</div>
           </div>`).join('')}</div>
-        <div class="answers">${q.options.map((o, i) => `<div class="answer opt opt${i} ${r.correct.includes(i) ? '' : 'wrong'}">${SHAPES[i]}<span>${esc(o)}</span>${r.correct.includes(i) ? '<span class="tick">&#10004;</span>' : ''}</div>`).join('')}</div>`);
-      requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.fill').forEach((f) => { f.style.height = f.dataset.h + 'px'; })));
+        <div class="answers revealed">${q.options.map((o, i) => `<div class="answer opt opt${i} ${r.correct.includes(i) ? '' : 'wrong'}">${SHAPES[i]}<span>${esc(o)}</span>${r.correct.includes(i) ? '<span class="tick">&#10004;</span>' : ''}</div>`).join('')}</div>`);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.querySelectorAll('.fill').forEach((f) => { f.style.height = f.dataset.h + 'px'; });
+        document.querySelectorAll('.cnt').forEach((c) => countUp(c, 0, +c.dataset.to, 600));
+      }));
       return;
     }
 
     case 'scoreboard': {
       next.textContent = 'Next';
-      body(`<div class="center"><h1 style="font-size:44px;margin:10px 0 24px">Scoreboard</h1>
-        <div class="board">${s.leaderboard.map((p, i) => `
-          <div class="entry" style="animation-delay:${i * 0.08}s">
+      body(`<div class="center"><h1 style="font-size:44px;margin:10px 0 12px" class="zoom">Scoreboard</h1>
+        <div class="callouts">${callouts(s.leaderboard)}</div>
+        <div class="board">${s.leaderboard.map((p) => `
+          <div class="entry" data-id="${p.id}">
             <span>${esc(p.name)}</span>
             ${p.streak >= 2 ? `<span class="streak">&#128293; ${p.streak}</span>` : ''}
             ${p.gained ? `<span class="gain">+${fmt(p.gained)}</span>` : ''}
-            <span class="score">${fmt(p.score)}</span>
+            <span class="score" data-from="${p.score - p.gained}" data-to="${p.score}">${fmt(fresh ? p.score - p.gained : p.score)}</span>
           </div>`).join('')}</div></div>`);
+      if (fresh) animateBoard(s.leaderboard);
       return;
     }
 
     case 'podium': {
       next.classList.add('hidden');
       $('#g-end').textContent = 'Close game';
-      if (fresh) { Sound.fanfare(); setTimeout(() => confetti(160), 2300); }
       const top = s.leaderboard;
       const step = (p, n) => p ? `<div class="step p${n}"><div class="who">${esc(p.name)}</div>
-        <div class="block"><div class="medal">${['', '&#129351;', '&#129352;', '&#129353;'][n]}</div><div style="font-size:24px">${fmt(p.score)}</div>
+        <div class="block"><div class="medal">${['', '&#129351;', '&#129352;', '&#129353;'][n]}</div>
+        <div style="font-size:24px" class="pscore" data-to="${p.score}">${fmt(fresh ? 0 : p.score)}</div>
         <div style="font-size:15px">${p.correctCount} of ${s.question.total} correct</div></div></div>` : '';
-      body(`<div class="center"><h1 style="font-size:44px">${esc(s.title)}</h1>
+      body(`<div class="center ${fresh ? '' : 'instant'}"><h1 style="font-size:44px">${esc(s.title)}</h1>
         <div class="podium">${step(top[1], 2)}${step(top[0], 1)}${step(top[2], 3)}</div>
-        ${top.length > 3 ? `<div class="board" style="margin-top:30px">${top.slice(3).map((p, i) => `<div class="entry" style="animation-delay:${3 + i * 0.1}s"><span>${i + 4}. ${esc(p.name)}</span><span class="score">${fmt(p.score)}</span></div>`).join('')}</div>` : ''}
+        <p class="drumroll" style="font-size:22px;font-weight:900;margin-top:16px">${fresh ? 'And the winner is...' : ''}</p>
+        ${top.length > 3 ? `<div class="board rest" style="margin-top:20px">${top.slice(3).map((p, i) => `<div class="entry"><span>${i + 4}. ${esc(p.name)}</span><span class="score">${fmt(p.score)}</span></div>`).join('')}</div>` : ''}
         <button class="primary" style="margin-top:30px" onclick="downloadResults()">Download results (CSV)</button></div>`);
+      if (!$('.spotlights')) document.body.insertAdjacentHTML('beforeend', '<div class="spotlights"></div>');
+      requestAnimationFrame(() => $('.spotlights').classList.add('on'));
+      if (fresh) podiumShow(top);
       return;
     }
   }
+}
+
+// One-line highlights above the scoreboard: a new leader and hot streaks.
+let lastLeaderId = null;
+function callouts(list) {
+  const out = [];
+  const lead = list[0];
+  if (lead && lead.id !== lastLeaderId && lastLeaderId !== null) out.push(`&#128081; ${esc(lead.name)} takes the lead!`);
+  lastLeaderId = lead ? lead.id : null;
+  const hot = [...list].sort((a, b) => b.streak - a.streak)[0];
+  if (hot && hot.streak >= 3) out.push(`&#128293; ${esc(hot.name)} is on a ${hot.streak}-answer streak!`);
+  return out.map((t, i) => `<div class="callout" style="animation-delay:${2.6 + i * 0.4}s">${t}</div>`).join('');
+}
+
+// Scoreboard: rows start in last round's order with last round's scores,
+// scores count up, then rows glide into their new places.
+function animateBoard(list) {
+  const rows = [...document.querySelectorAll('.board .entry')];
+  const oldOrder = [...list].sort((a, b) => (b.score - b.gained) - (a.score - a.gained)).map((p) => p.id);
+  const h = rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : 70;
+  rows.forEach((row, i) => {
+    const shift = (oldOrder.indexOf(row.dataset.id) - i) * h;
+    row.style.animation = 'none';
+    row.style.transform = `translateY(${shift}px)`;
+  });
+  setTimeout(() => {
+    rows.forEach((row) => { const sc = row.querySelector('.score'); countUp(sc, +sc.dataset.from, +sc.dataset.to, 1100); });
+    Sound.countUp();
+  }, 600);
+  setTimeout(() => {
+    rows.forEach((row) => {
+      row.style.transition = 'transform .8s cubic-bezier(.3,1.3,.5,1)';
+      row.style.transform = 'none';
+    });
+  }, 1900);
+}
+
+// Podium: 3rd, then 2nd, then a drumroll before 1st.
+const PODIUM_TIMES = { 3: 800, 2: 2800, 1: 6500 };
+function podiumShow(top) {
+  [3, 2, 1].forEach((n) => {
+    const el = document.querySelector(`.step.p${n}`);
+    if (!el) return;
+    setTimeout(() => {
+      el.classList.add('up');
+      const sc = el.querySelector('.pscore');
+      countUp(sc, 0, +sc.dataset.to, 900);
+      if (n === 1) {
+        Sound.fanfare(); confetti(180);
+        setTimeout(() => confetti(120), 1500); setTimeout(() => confetti(120), 3000);
+        $('.drumroll').textContent = `${top[0].name} wins!`;
+        $('.drumroll').classList.add('pop');
+      } else Sound.thud();
+    }, PODIUM_TIMES[n]);
+  });
+  setTimeout(() => Sound.drumroll(PODIUM_TIMES[1] - PODIUM_TIMES[2] - 600), PODIUM_TIMES[2] + 600);
+  setTimeout(() => { const r = $('.board.rest'); if (r) r.classList.add('up'); }, PODIUM_TIMES[1] + 1200);
 }
 
 function renderLobby(s) {
@@ -385,7 +473,13 @@ $('#g-end').onclick = () => {
   if (state && state.phase === 'podium') { sock.send({ t: 'host:end' }); session.del(); location.href = 'host.html'; return; }
   if (confirm('End this game for everyone?')) sock.send({ t: 'host:end' });
 };
-$('#g-mute').onclick = () => { Sound.muted = !Sound.muted; $('#g-mute').textContent = Sound.muted ? 'Sound off' : 'Sound on'; };
+function toggleSound() {
+  Sound.muted = !Sound.muted;
+  const label = Sound.muted ? 'Sound off' : 'Sound on';
+  $('#g-mute').textContent = label; $('#lb-mute').textContent = label;
+}
+$('#g-mute').onclick = toggleSound;
+$('#lb-mute').onclick = toggleSound;
 addEventListener('keydown', (e) => {
   if (!state || e.target.matches('input, textarea, select')) return;
   if (e.key === ' ' || e.key === 'Enter') {

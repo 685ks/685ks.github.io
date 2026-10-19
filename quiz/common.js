@@ -27,6 +27,16 @@ function show(id) {
 }
 function fmt(n) { return Number(n || 0).toLocaleString(); }
 
+// Count a number up inside an element, easing out.
+function countUp(el, from, to, ms) {
+  const t0 = performance.now();
+  (function frame(now) {
+    const k = Math.min(1, (now - t0) / ms);
+    el.textContent = fmt(Math.round(from + (to - from) * (1 - (1 - k) ** 3)));
+    if (k < 1) requestAnimationFrame(frame);
+  })(t0);
+}
+
 // Reconnecting WebSocket with a message handler and a queue for messages
 // sent while the socket is still connecting.
 function connect(onMessage, onOpen) {
@@ -94,6 +104,42 @@ const Sound = {
   reveal() { [523, 659, 784, 1046].forEach((f, i) => this.tone(f, 0.18, 'triangle', 0.12, i * 0.09)); },
   good() { [660, 880, 1320].forEach((f, i) => this.tone(f, 0.15, 'triangle', 0.14, i * 0.08)); },
   bad() { this.tone(220, 0.3, 'sawtooth', 0.08); this.tone(180, 0.35, 'sawtooth', 0.08, 0.12); },
+  countUp() { for (let i = 0; i < 10; i++) this.tone(600 + i * 60, 0.05, 'square', 0.03, i * 0.1); },
+  thud() { this.tone(110, 0.35, 'sine', 0.25); this.tone(220, 0.2, 'triangle', 0.08); },
+  // Fast snare-like taps that speed up and get louder.
+  drumroll(ms) {
+    if (this.muted || !this.ctx) return;
+    let t = 0, gap = 0.09;
+    while (t < ms / 1000) {
+      this.tone(140 + Math.random() * 40, 0.05, 'square', 0.03 + 0.06 * (t / (ms / 1000)), t);
+      t += gap; gap = Math.max(0.04, gap * 0.985);
+    }
+  },
+  // Looping background music made of simple synth notes.
+  // mode: 'lobby' (relaxed), 'question' (driving), or null to stop.
+  musicMode: null,
+  musicTimer: null,
+  music(mode) {
+    if (mode === this.musicMode) return;
+    this.musicMode = mode;
+    clearInterval(this.musicTimer);
+    if (!mode) return;
+    const lobby = mode === 'lobby';
+    const chords = lobby
+      ? [[262, 330, 392, 494], [220, 262, 330, 392], [175, 220, 262, 330], [196, 247, 294, 349]]
+      : [[220, 262, 330, 440], [220, 262, 330, 440], [175, 220, 262, 349], [196, 247, 294, 392]];
+    const stepMs = lobby ? 230 : 150;
+    let step = 0;
+    this.musicTimer = setInterval(() => {
+      if (this.muted || !this.ctx || this.ctx.state !== 'running') { step++; return; }
+      const chord = chords[Math.floor(step / 8) % chords.length];
+      const i = step % 8;
+      this.tone(chord[[0, 1, 2, 3, 2, 1, 2, 3][i]] * 2, lobby ? 0.22 : 0.12, 'triangle', 0.035);
+      if (i % 4 === 0) this.tone(chord[0] / 2, lobby ? 0.6 : 0.3, 'sine', 0.07);
+      if (!lobby && i % 2 === 1) this.tone(4000, 0.02, 'square', 0.008);
+      step++;
+    }, stepMs);
+  },
   fanfare() { [523, 659, 784, 659, 784, 1046].forEach((f, i) => this.tone(f, 0.25, 'triangle', 0.14, i * 0.16)); },
 };
 ['pointerdown', 'keydown'].forEach((ev) => addEventListener(ev, () => {
@@ -114,5 +160,23 @@ function confetti(n = 120) {
     setTimeout(() => c.remove(), 7000);
   }
 }
+
+// Slowly drifting answer shapes behind every page.
+(function shapes() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = document.createElement('div');
+  box.className = 'bg-shapes';
+  const n = innerWidth < 700 ? 6 : 12;
+  for (let i = 0; i < n; i++) {
+    box.insertAdjacentHTML('beforeend', SHAPES[i % 4]);
+    const el = box.lastElementChild;
+    const size = 30 + Math.random() * 60;
+    Object.assign(el.style, {
+      left: Math.random() * 100 + 'vw', width: size + 'px', height: size + 'px',
+      animationDuration: 18 + Math.random() * 22 + 's', animationDelay: -Math.random() * 40 + 's',
+    });
+  }
+  document.body.appendChild(box);
+})();
 
 document.querySelectorAll('[data-logo]').forEach((el) => { el.insertAdjacentHTML('afterbegin', LOGO); });
