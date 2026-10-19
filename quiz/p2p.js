@@ -6,6 +6,11 @@
 (function () {
   const PREFIX = 'quizwave-v1-';
   const NOT_FOUND = "We couldn't find a game with that PIN.";
+  const JOIN_TIMEOUT_MS = 15000;
+  const NET_ERRORS = {
+    broker: "This phone can't reach the Quizwave connection service. Check its internet connection and try again.",
+    blocked: "Found the game, but this network won't let the phone connect to the host's screen. Try the phone on mobile data, then press Enter again.",
+  };
 
   // ?peerhost=host:port points at a self-hosted PeerJS server (used in tests).
   function peerOptions() {
@@ -69,6 +74,7 @@
 
   function playerTransport(onMessage, onOpen) {
     let peer = null, conn = null, closed = false, everOpen = false, fails = 0;
+    let stage = 'broker', timer = null;
     let pin = (new URLSearchParams(location.search).get('pin') || '').replace(/\D/g, '') || null;
     const queue = [];
 
@@ -85,6 +91,7 @@
     function onPeerError(e) {
       if (e.type === 'peer-unavailable') {
         conn = null;
+        clearTimeout(timer); timer = null;
         if (everOpen) {
           // The host may be briefly re-registering; give up after a while.
           if (++fails < 10) return void setTimeout(dial, 2000);
@@ -99,13 +106,30 @@
       if (!closed && !conn) setTimeout(dial, 2000);
     }
 
+    // First join only: tell the player why instead of waiting forever.
+    // (Once in a game, dropped connections just keep retrying quietly.)
+    function failJoin(kind) {
+      clearTimeout(timer); timer = null;
+      if (everOpen) return;
+      queue.length = 0;
+      if (conn) { const old = conn; conn = null; old.close(); }
+      onMessage({ t: 'net:error', message: NET_ERRORS[kind] });
+    }
+
     function dial() {
       if (closed || !pin || conn) return;
+      if (!everOpen && !timer) {
+        stage = 'broker';
+        timer = setTimeout(() => failJoin(stage), JOIN_TIMEOUT_MS);
+      }
       ensurePeer(() => {
         if (closed || conn) return;
+        stage = 'blocked';
         const c = peer.connect(PREFIX + pin, { reliable: true });
         conn = c;
+        c.on('iceStateChanged', (s) => { if (s === 'failed' && conn === c) failJoin('blocked'); });
         c.on('open', () => {
+          clearTimeout(timer); timer = null;
           fails = 0;
           everOpen = true;
           if (onOpen) onOpen();

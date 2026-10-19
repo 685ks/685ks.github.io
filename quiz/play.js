@@ -19,8 +19,16 @@ const sock = connect(onMessage, () => {
   if (saved) sock.send({ t: 'player:join', pin, token: saved.token, name: saved.name });
 });
 
+// While waiting for the game to answer, the button says so instead of looking idle.
+function busy(form, on) {
+  const b = $(form + ' button');
+  if (!b.dataset.label) b.dataset.label = b.textContent;
+  b.disabled = on;
+  b.textContent = on ? 'Connecting...' : b.dataset.label;
+}
+
 if (pin && store.get('qw:' + pin)) show('s-game'), body('<div class="screen center"><div class="spinner"></div></div>');
-else if (pin) { $('#pin').value = pin; sock.send({ t: 'pin:check', pin }); }
+else if (pin) { $('#pin').value = pin; busy('#f-pin', true); sock.send({ t: 'pin:check', pin }); }
 else show('s-pin');
 
 $('#f-pin').onsubmit = (e) => {
@@ -28,6 +36,7 @@ $('#f-pin').onsubmit = (e) => {
   pin = $('#pin').value.replace(/\D/g, '');
   if (pin.length !== 6) { $('#pin-err').textContent = 'A game PIN has 6 digits.'; return; }
   $('#pin-err').textContent = '';
+  busy('#f-pin', true);
   sock.send({ t: 'pin:check', pin });
 };
 
@@ -36,11 +45,18 @@ $('#f-name').onsubmit = (e) => {
   const name = $('#name').value.trim();
   if (!name) { $('#name-err').textContent = 'Pick a nickname first.'; return; }
   $('#name-err').textContent = '';
+  busy('#f-name', true);
   sock.send({ t: 'player:join', pin, name });
 };
 
 function onMessage(m) {
+  if (m.t !== 'state') { busy('#f-pin', false); busy('#f-name', false); }
   switch (m.t) {
+    case 'net:error':
+      // Couldn't reach the game at all (only on the GitHub Pages version).
+      if (!$('#s-name').classList.contains('hidden')) $('#name-err').textContent = m.message;
+      else { show('s-pin'); $('#pin-err').textContent = m.message; }
+      return;
     case 'pin:result':
       if (m.ok) { show('s-name'); history.replaceState(null, '', 'play.html?pin=' + pin); setTimeout(() => $('#name').focus(), 50); }
       else { show('s-pin'); $('#pin-err').textContent = m.message; }
