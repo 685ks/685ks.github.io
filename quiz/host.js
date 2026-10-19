@@ -48,7 +48,12 @@ function renderLib() {
       const id = b.closest('[data-id]').dataset.id;
       const quiz = library.find((q) => q.id === id);
       if (b.dataset.act === 'edit') openEditor(quiz);
-      if (b.dataset.act === 'host') hostQuiz(quiz);
+      if (b.dataset.act === 'host') {
+        // Starting can take a few seconds on Pages while the relay connects.
+        $('#lib').querySelectorAll('[data-act=host]').forEach((x) => { x.disabled = true; });
+        b.textContent = 'Starting...';
+        hostQuiz(quiz);
+      }
       if (b.dataset.act === 'dup') { library.push({ ...structuredClone(quiz), id: uid(), title: quiz.title + ' (copy)' }); saveLib(); renderLib(); }
       if (b.dataset.act === 'del' && confirm(`Delete "${quiz.title}"?`)) { library = library.filter((q) => q.id !== id); saveLib(); renderLib(); }
     };

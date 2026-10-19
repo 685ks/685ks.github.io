@@ -234,7 +234,7 @@
     return api;
   }
 
-  QW.relayConnect = (onMessage, onOpen) =>
+  QW.relayConnect = QW.p2pConnect = (onMessage, onOpen) =>
     (document.getElementById('s-lib') ? hostTransport : playerTransport)(onMessage, onOpen);
 
   QW.qrDataUrl = (text) => {
