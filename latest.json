@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "published": "2026-10-20T23:15:24+00:00",
+  "notes": "Start Proton VPN before Kingshot (from your Teacher lesson of 21 Oct).",
+  "skills": [
+    {
+      "id": "proton_vpn",
+      "title": "Start Proton VPN",
+      "when": "before_game"
+    }
+  ],
+  "url": "kingshot-skills-1.zip",
+  "sha256": "fb35a9edae011bd94ee5ca8d01771e8d64b251f0b80241221acfb74d21afcf46"
+}
