@@ -13,9 +13,14 @@
   "url": "kingshot-skills-2.zip",
   "sha256": "9dcbc89923aa0988a4ee059d4ec9c6c9e87e8d82639681298ddac17b7fb7df6b",
   "app": {
-    "version": "1.4.2",
-    "url": "kingshot-app-1.4.2.zip",
-    "notes": "One-click app updates: from now on app fixes install with the Update button.",
-    "sha256": "52ef66c7510a9d9538df70aa2646e7879f713095dbd39bd81cd7d9523b1fc16d"
+    "version": "1.4.3",
+    "url": "kingshot-app-1.4.3.zip",
+    "notes": "Updates that change Python or Qt now install with the same Update button.",
+    "runtime": "84c6f5a5d07e8e56",
+    "sha256": "ccf8dd38499adb78a13d241b7346d1006cb73a3a64428a2b6f31008e28849e80",
+    "installer": {
+      "url": "kingshot-setup-1.4.3.exe",
+      "sha256": "9e44f7c693b8e39dc7db713917c3680ac92bd975c8d1f5606a7b535183557fbe"
+    }
   }
 }
