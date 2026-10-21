@@ -1,7 +1,8 @@
 {
-  "version": 1,
-  "published": "2026-10-20T23:15:24+00:00",
-  "notes": "Start Proton VPN before Kingshot (from your Teacher lesson of 21 Oct).",
+  "version": 2,
+  "published": "2026-10-21T09:09:57+00:00",
+  "notes": "Proton VPN: works on BlueStacks now, and instances on the exact same server press Change server until they differ. Needs Kingshot Command 1.4.1.",
+  "min_app": "1.4.1",
   "skills": [
     {
       "id": "proton_vpn",
@@ -9,6 +10,6 @@
       "when": "before_game"
     }
   ],
-  "url": "kingshot-skills-1.zip",
-  "sha256": "fb35a9edae011bd94ee5ca8d01771e8d64b251f0b80241221acfb74d21afcf46"
+  "url": "kingshot-skills-2.zip",
+  "sha256": "9dcbc89923aa0988a4ee059d4ec9c6c9e87e8d82639681298ddac17b7fb7df6b"
 }
