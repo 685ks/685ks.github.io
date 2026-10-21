@@ -13,14 +13,14 @@
   "url": "kingshot-skills-2.zip",
   "sha256": "9dcbc89923aa0988a4ee059d4ec9c6c9e87e8d82639681298ddac17b7fb7df6b",
   "app": {
-    "version": "1.4.3",
-    "url": "kingshot-app-1.4.3.zip",
-    "notes": "Updates that change Python or Qt now install with the same Update button.",
+    "version": "1.4.4",
+    "url": "kingshot-app-1.4.4.zip",
+    "notes": "New Characters page: one click per instance learns every character's player ID, kingdom, Town Center/Truegold level, power and name. Renames update the same row.",
     "runtime": "84c6f5a5d07e8e56",
-    "sha256": "ccf8dd38499adb78a13d241b7346d1006cb73a3a64428a2b6f31008e28849e80",
+    "sha256": "edfd51a3dbfe45aeabff817f86f1f9e233395d93af43d2c39e504ec5ee5d2efe",
     "installer": {
-      "url": "kingshot-setup-1.4.3.exe",
-      "sha256": "9e44f7c693b8e39dc7db713917c3680ac92bd975c8d1f5606a7b535183557fbe"
+      "url": "kingshot-setup-1.4.4.exe",
+      "sha256": "14496aee4431c4f143ef452c5ce3eea42b99e6d8fa9d530c52caa1d744116de4"
     }
   }
 }
