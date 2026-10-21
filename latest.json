@@ -13,14 +13,14 @@
   "url": "kingshot-skills-2.zip",
   "sha256": "9dcbc89923aa0988a4ee059d4ec9c6c9e87e8d82639681298ddac17b7fb7df6b",
   "app": {
-    "version": "1.4.6",
-    "url": "kingshot-app-1.4.6.zip",
-    "notes": "Characters page: press Edit (or double-click a row) to type in a missed player ID or fix a name, kingdom or level; Add by hand adds a character. Typed IDs are kept by later Learns.",
+    "version": "1.4.7",
+    "url": "kingshot-app-1.4.7.zip",
+    "notes": "New Build a bot page: click blocks together (Activate instance, Open/Connect Proton with retries, Unique server check, Open Kingshot, Do intels...), smart filters by level/kingdom/alliance, and bots that run at startup. Characters page: tick Autopilot per row, and Jobs and bots picks each account's jobs and presets.",
     "runtime": "84c6f5a5d07e8e56",
-    "sha256": "9aeb5aa9b052e2031a3a5e176176fb05eae787e0fdfbaafcb1ed553093551c0c",
+    "sha256": "8f47595ce8969f85ecb92746cf84cb30ad30e7ef58a7662c44e7abda8b130d73",
     "installer": {
-      "url": "kingshot-setup-1.4.6.exe",
-      "sha256": "3d8ed8c036b21844e990c553746c09fb6e60ae89cff94c9321a4974ee1be5a99"
+      "url": "kingshot-setup-1.4.7.exe",
+      "sha256": "bb2fc0a4d71a7dcaac809a3ae473e4c9544057390848a20105637a087aebbc3e"
     }
   }
 }
