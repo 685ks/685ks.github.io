@@ -13,14 +13,14 @@
   "url": "kingshot-skills-2.zip",
   "sha256": "9dcbc89923aa0988a4ee059d4ec9c6c9e87e8d82639681298ddac17b7fb7df6b",
   "app": {
-    "version": "1.4.4",
-    "url": "kingshot-app-1.4.4.zip",
-    "notes": "New Characters page: one click per instance learns every character's player ID, kingdom, Town Center/Truegold level, power and name. Renames update the same row.",
+    "version": "1.4.5",
+    "url": "kingshot-app-1.4.5.zip",
+    "notes": "Fix: an instance whose adb connection goes stale (game running, bot sees nothing) is reconnected. Terror rallies now wait, reconnect, reopen Kingshot after your VPN skill and carry on instead of stopping.",
     "runtime": "84c6f5a5d07e8e56",
-    "sha256": "edfd51a3dbfe45aeabff817f86f1f9e233395d93af43d2c39e504ec5ee5d2efe",
+    "sha256": "9510b9c4d08f8322e465b7c8f914ace5ea859e6a37392c97b1c6f7efc8b0d157",
     "installer": {
-      "url": "kingshot-setup-1.4.4.exe",
-      "sha256": "14496aee4431c4f143ef452c5ce3eea42b99e6d8fa9d530c52caa1d744116de4"
+      "url": "kingshot-setup-1.4.5.exe",
+      "sha256": "66e91e9dc5ca87730abb7cdcea65deb113cca0b543ed9069862cc84ac07db4f2"
     }
   }
 }
