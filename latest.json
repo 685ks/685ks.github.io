@@ -18,14 +18,14 @@
   "url": "kingshot-skills-3.zip",
   "sha256": "d49aaf97e3e60c8e333353505082893a90f3d621052b6b9c11f5d0c80e10d1b0",
   "app": {
-    "version": "1.4.7",
-    "url": "kingshot-app-1.4.7.zip",
-    "notes": "New Build a bot page: click blocks together (Activate instance, Open/Connect Proton with retries, Unique server check, Open Kingshot, Do intels...), smart filters by level/kingdom/alliance, and bots that run at startup. Characters page: tick Autopilot per row, and Jobs and bots picks each account's jobs and presets.",
+    "version": "1.4.8",
+    "url": "kingshot-app-1.4.8.zip",
+    "notes": "Fix: dropdowns (e.g. 'If it works' on Build a bot) could open as a bare list across the whole screen. Every dropdown now opens right under its field.",
     "runtime": "84c6f5a5d07e8e56",
-    "sha256": "8f47595ce8969f85ecb92746cf84cb30ad30e7ef58a7662c44e7abda8b130d73",
+    "sha256": "936b46922977551c9c5bdf63a52af965e73075490c055aa43ac2456394760ef8",
     "installer": {
-      "url": "kingshot-setup-1.4.7.exe",
-      "sha256": "bb2fc0a4d71a7dcaac809a3ae473e4c9544057390848a20105637a087aebbc3e"
+      "url": "kingshot-setup-1.4.8.exe",
+      "sha256": "b2fe5a122d055b19702fa50253437704ab4010e1a827345a0012375b0c0f1ed6"
     }
   }
 }
