@@ -18,14 +18,14 @@
   "url": "kingshot-skills-3.zip",
   "sha256": "d49aaf97e3e60c8e333353505082893a90f3d621052b6b9c11f5d0c80e10d1b0",
   "app": {
-    "version": "1.4.8",
-    "url": "kingshot-app-1.4.8.zip",
-    "notes": "Fix: dropdowns (e.g. 'If it works' on Build a bot) could open as a bare list across the whole screen. Every dropdown now opens right under its field.",
+    "version": "1.4.9",
+    "url": "kingshot-app-1.4.9.zip",
+    "notes": "Build a bot: every learned skill (e.g. Water allies' fountains) is now its own block under Learned skills, and the list refreshes after each Update.",
     "runtime": "84c6f5a5d07e8e56",
-    "sha256": "936b46922977551c9c5bdf63a52af965e73075490c055aa43ac2456394760ef8",
+    "sha256": "0fb65becffa547a0574a2f90b36d84433590196fbb64716fe688236ea882f2a4",
     "installer": {
-      "url": "kingshot-setup-1.4.8.exe",
-      "sha256": "b2fe5a122d055b19702fa50253437704ab4010e1a827345a0012375b0c0f1ed6"
+      "url": "kingshot-setup-1.4.9.exe",
+      "sha256": "49659805f5e093b8feedd72af02fd242c37210bc3c0b26775b4a323c799e7326"
     }
   }
 }
