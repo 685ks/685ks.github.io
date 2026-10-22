@@ -1,7 +1,7 @@
 {
-  "version": 3,
-  "published": "2026-10-21T23:29:23+00:00",
-  "notes": "New: Water allies' fountains (from your Water lesson). Use it as a Learned skill block in Build a bot, or press Run now.",
+  "version": 4,
+  "published": "2026-10-22T14:18:31+00:00",
+  "notes": "New: Wavebound Voyage boats (from your Boats lesson). Use it as a Learned skill block in Build a bot, or press Run now.",
   "min_app": "1.4.1",
   "skills": [
     {
@@ -13,10 +13,15 @@
       "id": "water_fountains",
       "title": "Water allies' fountains",
       "when": "manual"
+    },
+    {
+      "id": "boat_voyage",
+      "title": "Wavebound Voyage boats",
+      "when": "manual"
     }
   ],
-  "url": "kingshot-skills-3.zip",
-  "sha256": "d49aaf97e3e60c8e333353505082893a90f3d621052b6b9c11f5d0c80e10d1b0",
+  "url": "kingshot-skills-4.zip",
+  "sha256": "6eb354483ffc454d54c428511bf1ae3f3dca8a85304418ed0db0256ae5eeeb1c",
   "app": {
     "version": "1.5.1",
     "url": "kingshot-app-1.5.1.zip",
