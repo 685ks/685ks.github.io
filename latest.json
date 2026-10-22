@@ -1,7 +1,7 @@
 {
-  "version": 4,
-  "published": "2026-10-22T14:18:31+00:00",
-  "notes": "New: Wavebound Voyage boats (from your Boats lesson). Use it as a Learned skill block in Build a bot, or press Run now.",
+  "version": 5,
+  "published": "2026-10-22T17:59:14+00:00",
+  "notes": "New: Install game update (from the Update lesson). Before each Autopilot session, if Kingshot shows its Update box, it updates through the Play Store, presses Play and Enter Game. Also a Learned skill block in Build a bot.",
   "min_app": "1.4.1",
   "skills": [
     {
@@ -18,10 +18,15 @@
       "id": "boat_voyage",
       "title": "Wavebound Voyage boats",
       "when": "manual"
+    },
+    {
+      "id": "game_update",
+      "title": "Install game update",
+      "when": "session_start"
     }
   ],
-  "url": "kingshot-skills-4.zip",
-  "sha256": "6eb354483ffc454d54c428511bf1ae3f3dca8a85304418ed0db0256ae5eeeb1c",
+  "url": "kingshot-skills-5.zip",
+  "sha256": "362f0b0516ae38695543dd8b85c9ac17041ad1cb609a8eedf5508a89c6a8d3ff",
   "app": {
     "version": "1.5.3",
     "url": "kingshot-app-1.5.3.zip",
